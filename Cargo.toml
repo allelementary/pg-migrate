@@ -3,10 +3,10 @@ name = "pg_migrate"
 version = "0.1.0"
 authors = ["Mikhail Antonov <allelementaryfor@gmail.com>"]
 edition = "2021"
-description = "A simple PostgreSQL migration tool"
+description = "Database migration tool for PostgreSQL"
 license = "MIT"
 repository = "https://github.com/allelementary/pg_migrate"
-documentation = "https://docs.rs/pg_migrate"
+documentation = "https://github.com/allelementary/pg_migrate"
 readme = "README.md"
 keywords = ["postgresql", "migration"]
 categories = ["database"]
@@ -22,4 +22,3 @@ uuid = { version = "1", features = ["v4"] }
 [[bin]]
 name = "pg_migrate_cli"
 path = "src/bin/pg_migrate_cli.rs"
-
