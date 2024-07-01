@@ -277,8 +277,7 @@ impl DbClient {
     }
 
     fn _get_head(&self) -> Option<String> {
-        let migrations_dir = "migrations";
-        let mut paths: Vec<PathBuf> = fs::read_dir(migrations_dir).unwrap()
+        let mut paths: Vec<PathBuf> = fs::read_dir(MIGRATION_DIR).unwrap()
             .map(|entry| entry.unwrap().path())
             .collect();
 
