@@ -1,0 +1,25 @@
+[package]
+name = "pg_migrate"
+version = "0.1.0"
+authors = ["Mikhail Antonov <allelementaryfor@gmail.com>"]
+edition = "2021"
+description = "A simple PostgreSQL migration tool"
+license = "MIT"
+repository = "https://github.com/allelementary/pg_migrate"
+documentation = "https://docs.rs/pg_migrate"
+readme = "README.md"
+keywords = ["postgresql", "migration"]
+categories = ["database"]
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+postgres = { version = "0.19" }
+serde = { version = "1.0", features = ["derive"] }
+dotenv = "0.15"
+chrono = "0.4"
+uuid = { version = "1", features = ["v4"] }
+
+[[bin]]
+name = "pg_migrate_cli"
+path = "src/bin/pg_migrate_cli.rs"
+
