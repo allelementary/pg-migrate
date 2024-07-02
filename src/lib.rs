@@ -140,7 +140,6 @@ impl DbClient {
         let suffix = { "_up.sql" };
         let current = self._get_current();
         let head = self._get_head().unwrap();
-
         let mut running = false;
         for path in paths {
             if path.to_str().unwrap().ends_with(suffix) {
@@ -191,26 +190,31 @@ impl DbClient {
                 if !current.is_none() && path.to_str().unwrap().contains(current.as_deref().unwrap()) && upgrade {
                     running = true;
                 } else if running {
-                    let migration = fs::read_to_string(&path).unwrap();
-                    self.client.batch_execute(&migration)?;
-                    let (_, _, migration_id, migration_name) = self._get_migration_details(&path);
-                    let down_migration_id: Option<String> = self._get_down_migration_id(path.to_str().unwrap());
-
                     if upgrade {
+                        let migration = fs::read_to_string(&path).unwrap();
+                        self.client.batch_execute(&migration)?;
+                        let (_, _, migration_id, migration_name) = self._get_migration_details(&path);
+
                         self._record_current(Some(migration_id.clone()))?;
                         self._save_history(&migration_id.clone(), &migration_name)?;
-                    } else {
-                        let _ = self._record_current(down_migration_id.clone());
-                        self._remove_from_history(&down_migration_id.clone().unwrap())?;
-                    }
 
-                    if path.to_str().unwrap().contains(target) {
-                        if upgrade {
+                        if path.to_str().unwrap().contains(target) {
                             println!("{} to target: {}", direction, target);
-                        } else {
-                            println!("{} to target: {:?}", direction, &down_migration_id);
+                            break;
                         }
-                        break;
+                    } else {
+                        let down_migration_id: Option<String> = self._get_down_migration_id(path.to_str().unwrap());
+                        if path.to_str().unwrap().contains(target) {
+                            println!("{} to target: {:?}", direction, &target);
+                            break;
+                        }
+
+                        let migration = fs::read_to_string(&path).unwrap();
+                        self.client.batch_execute(&migration)?;
+                        let (_, _, migration_id, _) = self._get_migration_details(&path);
+
+                        let _ = self._record_current(down_migration_id.clone());
+                        self._remove_from_history(&migration_id.clone())?;
                     }
                 }
             }
@@ -250,18 +254,29 @@ impl DbClient {
                         self._record_current(Some(migration_id.clone()))?;
                         self._save_history(&migration_id.clone(), &migration_name)?;
                     } else {
-                        let _ = self._record_current(down_migration_id.clone());
-                        if !down_migration_id.is_none() {
-                            self._remove_from_history(&down_migration_id.clone().unwrap())?;
+                        match down_migration_id.as_deref() {
+                            Some("None") => {
+                                let _ = self._record_current(None);
+                            }
+                            Some(_string) => {
+                                let _ = self._record_current(down_migration_id.clone());
+                                self._remove_from_history(&migration_id.clone())?;
+                            }
+                            None => {
+                                let _ = self._record_current(None);
+                            }
                         }
                     }
-
                     counter += 1;
                     if counter == *count {
                         if upgrade {
                             println!("{} to: {:?} {}", direction, &migration_id, &migration_name);
                         } else {
-                            println!("{} to: {:?}", direction, &down_migration_id);
+                            if !down_migration_id.is_none() {
+                                println!("{} to: {:?}", direction, &down_migration_id.unwrap());
+                            } else {
+                                println!("{} to: {:?}", direction, &down_migration_id);
+                            }
                         }
 
                         break;
@@ -281,7 +296,7 @@ impl DbClient {
             .map(|entry| entry.unwrap().path())
             .collect();
 
-        self._sort_paths(&mut paths, true);
+        self._sort_paths(&mut paths, false);
 
         if paths.len() > 0 {
             let filename = &paths[0];
@@ -346,7 +361,7 @@ impl DbClient {
             if asc {
                 return a_time.cmp(&b_time);
             }
-            a_time.cmp(&b_time)
+            b_time.cmp(&a_time)
         });
     }
 
@@ -370,8 +385,7 @@ impl DbClient {
             .map(|entry| entry.unwrap().path())
             .collect();
         let suffix = if upgrade { "_up.sql" } else { "_down.sql" };
-
-        self._sort_paths(&mut paths, true);
+        self._sort_paths(&mut paths, upgrade);
         let current = self._get_current();
         let mut running = false;
         let mut counter = 0;
@@ -418,7 +432,7 @@ impl DbClient {
             let line = line.unwrap();
             if line.starts_with("-- Down Revision: ") {
                 let revision = line.trim_start_matches("-- Down Revision: ").to_string();
-                Some(revision);
+                return Some(revision)
             }
         }
         None
