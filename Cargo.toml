@@ -1,12 +1,11 @@
 [package]
 name = "pg_migrate"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Mikhail Antonov <allelementaryfor@gmail.com>"]
 edition = "2021"
 description = "Database migration tool for PostgreSQL"
 license = "MIT"
 repository = "https://github.com/allelementary/pg-migrate"
-documentation = "https://github.com/allelementary/pg-migrate"
 readme = "README.md"
 keywords = ["postgresql", "migration"]
 categories = ["database"]

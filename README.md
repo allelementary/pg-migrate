@@ -1,7 +1,7 @@
 # PG Migrate
 
 ## About
-Database migration tool for PostgreSQL written in Rust.
+Database migration tool for PostgreSQL written in Rust
 
 ## Features
 - Create migration
@@ -16,7 +16,7 @@ Database migration tool for PostgreSQL written in Rust.
 cargo install pg_migrate
 ```
 
-Set up the database URL in the environment variable `DATABASE_URL`.
+Set up the database URL and migrations directory in the environment variables `DATABASE_URL` and `MIGRATION_DIR`.
 
 ```bash
 DATABASE_URL=postgresql://username:password@localhost/dbname
@@ -26,35 +26,35 @@ DATABASE_URL=postgresql://username:password@localhost/dbname
 
 - Create migration:
 ```bash
-cargo run --bin pg_migrate_cli -- new <migration name>
+pg_migrate new <migration name>
 ```
 
 - Upgrade / Downgrade:
 There is multiple options to upgrade or downgrade the database:
   - Upgrade to the latest migration:
     ```bash
-    cargo run --bin pg_migrate_cli -- upgrade head
+    pg_migrate upgrade head
     ```
   - Upgrade / Downgrade to a specific migration by migration id:
     ```bash
-    cargo run --bin pg_migrate_cli -- upgrade/downgrade migration-id <migration-id>
+    pg_migrate upgrade/downgrade migration-id <migration-id>
     ```
   - Upgrade / Downgrade by number of migrations:
     ```bash
-    cargo run --bin pg_migrate_cli -- upgrade/downgrade number <number>
+    pg_migrate upgrade/downgrade number <number>
     ```
 
 - Get head:
 ```bash
-cargo run --bin pg_migrate_cli -- head
+pg_migrate head
 ```
 
 - Get current migration:
 ```bash
-cargo run --bin pg_migrate_cli -- current
+pg_migrate current
 ```
 
 - Get migrations history
 ```bash
-cargo run --bin pg_migrate_cli -- history
+pg_migrate history
 ```

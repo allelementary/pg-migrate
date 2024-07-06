@@ -5,7 +5,7 @@ use std::env;
 
 #[derive(Parser)]
 #[command(name = "pg_migrate")]
-#[command(about = "A simple PostgreSQL migration tool", long_about = None)]
+#[command(about = "Database migration tool for PostgreSQL written in Rust", long_about = None)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
@@ -53,6 +53,19 @@ fn main() {
             let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
             db_client.create_new_migration(name).expect("Failed to create new migration");
         }
+        Commands::Head {} => {
+            let db_client = DbClient::new(&database_url).expect("Failed to initialize database");
+            db_client.get_head().expect("Failed to get head");
+        }
+        Commands::Current {} => {
+            let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
+            db_client.get_current();
+        }
+        Commands::History {} => {
+            let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
+            db_client.get_history().expect("Failed to get history");
+        }
+
         Commands::Upgrade { command } => match command {
             UpgradeSubcommands::Head => {
                 let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
@@ -67,6 +80,7 @@ fn main() {
                 db_client.run_migrations(true, false, None, Some(num)).expect("Failed to run migrations");
             }
         }
+
         Commands::Downgrade { command } => match command{
             DowngradeSubcommands::MigrationId { id } => {
                 let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
@@ -76,18 +90,6 @@ fn main() {
                 let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
                 db_client.run_migrations(false, false, None, Some(num)).expect("Failed to run migrations");
             }
-        }
-        Commands::Head {} => {
-            let db_client = DbClient::new(&database_url).expect("Failed to initialize database");
-            db_client.get_head().expect("Failed to get head");
-        }
-        Commands::Current {} => {
-            let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
-            db_client.get_current();
-        }
-        Commands::History {} => {
-            let mut db_client = DbClient::new(&database_url).expect("Failed to initialize database");
-            db_client.get_history().expect("Failed to get history");
         }
     }
 }
