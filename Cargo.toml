@@ -10,6 +10,8 @@ readme = "README.md"
 keywords = ["postgresql", "migration"]
 categories = ["database"]
 
+exclude = ["migrations/**"]
+
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
 postgres = { version = "0.19" }
@@ -22,5 +24,3 @@ gag = "1.0.0"
 [[bin]]
 name = "pg_migrate_cli"
 path = "src/bin/pg_migrate_cli.rs"
-
-exclude = ["migrations/**"]
