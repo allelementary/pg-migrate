@@ -22,3 +22,5 @@ gag = "1.0.0"
 [[bin]]
 name = "pg_migrate_cli"
 path = "src/bin/pg_migrate_cli.rs"
+
+exclude = ["migrations/**"]
