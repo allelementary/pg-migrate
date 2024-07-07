@@ -1,5 +1,11 @@
 # PG Migrate
 
+<br/>
+<p align="center">
+<img src="./logo.webp" width="400" alt="pg-migrate-logo">
+</p>
+<br/>
+
 ## About
 Database migration tool for PostgreSQL written in Rust
 
