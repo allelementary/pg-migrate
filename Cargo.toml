@@ -17,6 +17,7 @@ serde = { version = "1.0", features = ["derive"] }
 dotenv = "0.15"
 chrono = "0.4"
 uuid = { version = "1", features = ["v4"] }
+gag = "1.0.0"
 
 [[bin]]
 name = "pg_migrate_cli"

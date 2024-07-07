@@ -206,7 +206,7 @@ impl DbClient {
                     } else {
                         let down_migration_id: Option<String> = self._get_down_migration_id(path.to_str().unwrap());
                         if path.to_str().unwrap().contains(target) {
-                            println!("{} to target: {:?}", direction, &target);
+                            println!("{} to target: {}", direction, &target);
                             break;
                         }
 
@@ -237,8 +237,8 @@ impl DbClient {
         }
 
         let mut running = false;
+        let mut counter = 0;
         for path in paths.iter() {
-            let mut counter = 0;
             if path.to_str().unwrap().ends_with(suffix) {
                 if current.is_none() || !upgrade && path.to_str().unwrap().contains(current.as_deref().unwrap()) {
                     running = true;
@@ -271,7 +271,7 @@ impl DbClient {
                     counter += 1;
                     if counter == *count {
                         if upgrade {
-                            println!("{} to: {:?} {}", direction, &migration_id, &migration_name);
+                            println!("{} to: {} {}", direction, &migration_id, &migration_name);
                         } else {
                             if !down_migration_id.is_none() {
                                 println!("{} to: {:?}", direction, &down_migration_id.unwrap());
